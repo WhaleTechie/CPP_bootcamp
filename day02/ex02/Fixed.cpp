@@ -1,0 +1,166 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Fixed.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lkrinova <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/25 16:59:09 by lkrinova          #+#    #+#             */
+/*   Updated: 2021/10/25 16:59:11 by lkrinova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Fixed.hpp"
+#include <iostream>
+
+Fixed::Fixed (): _value(0) {  
+}
+//A constructor that takes a constant integer as a parameter and that converts it to
+//the correspondant fixed(8) point value. The fractional bits value is initialized like
+//in ex00.
+Fixed::Fixed ( int const val_int ) {
+    this->_value = val_int << _bits;
+}
+//A constructor that takes a constant floating point as a parameter and that converts
+//it to the correspondant fixed(8) point value. The fractional bits value is initialized
+//like in ex00.
+Fixed::Fixed (float const val_flt){
+    this->_value = roundf(val_flt * (1 << _bits));
+}
+// Copy constructor
+Fixed::Fixed (const Fixed &other) {
+    this->_value = other._value;
+}
+
+// operator overloads
+
+Fixed & Fixed::operator = (Fixed const &other) {
+    this->_value = other.getRawBits();
+	return *this;
+}
+
+std::ostream &operator<<(std::ostream &out, Fixed const &val) {
+    out << val.toFloat();
+    return (out);
+}
+// Six comparison operators: >, <, >=, <=, == and !=.
+bool	Fixed::operator > ( Fixed const &other ) const {
+	return (this->toFloat() > other.toFloat());
+}
+
+bool	Fixed::operator < ( Fixed const &other ) const {
+	return (this->toFloat() < other.toFloat());
+}
+
+bool	Fixed::operator >= ( Fixed const &other ) const {
+	return (this->toFloat() < other.toFloat());
+}
+
+bool	Fixed::operator <= ( Fixed const &other ) const {
+	return (this->toFloat() < other.toFloat());
+}
+
+bool	Fixed::operator == ( Fixed const &other ) const {
+	return (this->toFloat() == other.toFloat());
+}
+
+bool	Fixed::operator != ( Fixed const &other ) const {
+	return (this->toFloat() != other.toFloat());
+}
+
+// Four arithmetic operators: +, -, *, and /.
+
+Fixed	Fixed::operator - ( Fixed const &other ) const {
+	return Fixed(this->toFloat() - other.toFloat());
+}
+
+Fixed	Fixed::operator + ( Fixed const &other ) const {
+	return Fixed(this->toFloat() + other.toFloat());
+}
+
+Fixed	Fixed::operator * ( Fixed const &other ) const {
+	return Fixed(this->toFloat() * other.toFloat());
+}
+
+Fixed	Fixed::operator / ( Fixed const &other ) const {
+	return Fixed(this->toFloat() / other.toFloat());
+}
+
+// The pre-increment, post-increment, pre-decrement and post-decrement operators,
+Fixed &	Fixed::operator ++ ( void ) {
+	this->_value++;
+	return *this;
+}
+
+Fixed	Fixed::operator ++ ( int ) {
+	Fixed	temp;
+
+	temp = (*this);
+	this->_value++;
+	return temp;
+}
+
+Fixed &	Fixed::operator -- ( void ) {
+	this->_value--;
+	return *this;
+}
+
+Fixed	Fixed::operator -- ( int ) {
+	Fixed	temp;
+
+	temp = (*this);
+	this->_value--;
+	return temp;
+}
+// |^| перегрузка операторов
+
+Fixed &	Fixed::max ( Fixed &a, Fixed &b ) {
+	if (a > b)
+		return a;
+	else
+		return b;
+}
+
+Fixed const & Fixed::max ( Fixed const &a, Fixed const &b ) {
+	if (a > b)
+		return a;
+	else
+		return b;
+}
+
+Fixed &	Fixed::min ( Fixed &a, Fixed &b ) {
+	if (a < b)
+		return a;
+	else
+		return b;
+}
+
+Fixed const & Fixed::min ( Fixed const &a, Fixed const &b ) {
+	if (a < b)
+		return a;
+	else
+		return b;
+}
+
+Fixed::~Fixed () {
+}
+
+int	Fixed::getRawBits( void ) const {
+	return _value;
+}
+
+void Fixed::setRawBits( int const raw ) {
+	this->_value = raw;
+}
+
+//A member function float toFloat( void ) const; that converts the fixed point
+//value to a floating point value.
+float Fixed::toFloat( void ) const {
+    return ((float)_value / (1 << _bits));
+}
+
+//A member function int toInt( void ) const; that converts the fixed point value
+//to an integer value.
+int Fixed::toInt( void ) const {
+   return (_value / (1 << _bits)); 
+}
